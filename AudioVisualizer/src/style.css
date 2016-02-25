@@ -7,6 +7,6 @@ and open the template in the editor.
     Created on : 25.02.2016, 10:36:38
     Author     : Matthias
 */
-.heading{
-   -fx-font:cursive;
+#Heading{
+  -fx-font: 30px "Arial";
 }
