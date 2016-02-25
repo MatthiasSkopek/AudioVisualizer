@@ -36,11 +36,7 @@ public class AudioVisualizer extends Application {
         
         Scene scene = new Scene(root, 300, 250);
         
-<<<<<<< HEAD
         primaryStage.setTitle("AudioVisualizer");
-=======
-        primaryStage.setTitle("Audio Visualizer");
->>>>>>> origin/master
         primaryStage.setScene(scene);
         primaryStage.show();
     }
