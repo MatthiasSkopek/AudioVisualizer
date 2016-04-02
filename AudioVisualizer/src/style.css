@@ -8,5 +8,7 @@ and open the template in the editor.
     Author     : Matthias
 */
 #Heading{
-  -fx-font: 30px "Arial";
+    -fx-background-image: url(Unbenannt-1_1.png);
+    -fx-arc-height: 150;
+    -fx-arc-width: 560;
 }
