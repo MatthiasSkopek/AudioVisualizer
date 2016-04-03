@@ -1,0 +1,14 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 25.02.2016, 10:36:38
+    Author     : Matthias
+*/
+#Heading{
+    -fx-background-image: url(Unbenannt-1_1.png);
+    -fx-arc-height: 150;
+    -fx-arc-width: 560;
+}
