@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -28,6 +30,12 @@ public class AudioVisualizer extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Hello World!");
+                AudiaVisPlayer p = new AudiaVisPlayer();
+                
+                p.start();
+                Scene x = new Scene(p.getBox());
+                x.getStylesheets().add("VisCss.css");
+                primaryStage.setScene(x);
             }
         });
         

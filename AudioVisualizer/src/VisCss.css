@@ -1,0 +1,24 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29.03.2016, 15:04:05
+    Author     : Matti
+*/
+#play {
+    -fx-background-image: url('play.png');
+    -fx-background-position: center center;
+    -fx-background-repeat: stretch;
+}
+#pause {
+    -fx-background-image: url('pause.png');
+    -fx-background-position: center center;
+    -fx-background-repeat: stretch;
+}
+#stop {
+    -fx-background-image: url('stop.png');
+    -fx-background-position: center center;
+    -fx-background-repeat: stretch;
+}
