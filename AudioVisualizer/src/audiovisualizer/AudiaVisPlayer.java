@@ -37,13 +37,13 @@ public class AudiaVisPlayer {
     private AudioSpectrumListener spectrumListener;
     private Parent p;
 
-    public void start() {
+    public void start(String pathOfData) {
         lines = new HBox();
         lines.setPrefHeight(300);
         /**
          * SONGS: hello tears techno testsound trap1 bass bounce
          */
-        mediaPlayer = new MediaPlayer(new Media("file:///C:/Users/Matti/Desktop/AudioVisualizer/techno.mp3"));
+        mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
             vuMeters[i] = new VUMeter();
             vuMeters[i].setId("bottom");
