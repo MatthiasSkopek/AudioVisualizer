@@ -80,6 +80,7 @@ public class AudioVisualizer extends Application {
                                 @Override
                                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                                     p.bild.set(x.getWidth());
+                                    
                                 }
                             });
                             

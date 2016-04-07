@@ -43,22 +43,14 @@ public class AudiaVisPlayer {
     private int AMOUNT = 100;
     private VUMeter[] vuMeters = new VUMeter[AMOUNT];
     private Double[] lastValues = new Double[AMOUNT];
-    private VBox box;
+    private BorderPane box;
     private HBox lines;
     private AudioSpectrumListener spectrumListener;
     private Parent p;
-<<<<<<< HEAD
+
  final MenuItem  exitItem = new MenuItem("Exit"); 
         final MenuItem  openItem = new MenuItem("Open");   
 
-    /**
-     *
-     * @param pathOfData
-     */
-    public void start(String pathOfData)  {
-
-        
-=======
     public DoubleProperty bild;
 
     public void start(int Bildschirmbreite, String pathOfData) {
@@ -75,7 +67,7 @@ public class AudiaVisPlayer {
         };
 
         //BOX
->>>>>>> origin/master
+
         lines = new HBox();
 
         lines.setPrefHeight(300);
@@ -142,13 +134,14 @@ public class AudiaVisPlayer {
          final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
         final MenuBar menuBar = new MenuBar(fileMenu);
         menuBar.setId("menuBar");
-        menuBar.setPrefHeight(30);
+        menuBar.setPrefHeight(35);
         Button play = new Button ();
         Button stop = new Button ();
         Label time = new Label();
         final ToolBar tool = new ToolBar(
                 play,stop,time
         );
+        tool.autosize();
         tool.setId("toolbar");
         tool.setPrefHeight(30);
         play.setId("play");
@@ -180,14 +173,10 @@ public class AudiaVisPlayer {
             public void handle(ActionEvent t) {
                 mediaPlayer.stop();
                 isplay = false;
-                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
-<<<<<<< HEAD
-                
+                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));     
                 play.setId("play");
-=======
 
-                btn.setId("play");
->>>>>>> origin/master
+                play.setId("play");
             }
         });
 
@@ -206,15 +195,13 @@ public class AudiaVisPlayer {
         mediaPlayer.setOnEndOfMedia(() -> {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
-<<<<<<< HEAD
         
-        HBox toolline = new HBox(menuBar, tool, time);
-=======
-
-        HBox toolline = new HBox(btn, stop, time);
->>>>>>> origin/master
-
-        box = new VBox(toolline,lines);
+        
+        tool.setMaxWidth(Double.MAX_VALUE);
+        menuBar.setMaxWidth(Double.MAX_VALUE);
+        box = new BorderPane();
+        box.setTop(tool);
+        box.setBottom(lines);
        
         box.setId("main");
     }
@@ -227,11 +214,11 @@ public class AudiaVisPlayer {
         this.mediaPlayer = mediaPlayer;
     }
 
-    public VBox getBox() {
+    public BorderPane getBox() {
         return box;
     }
 
-    public void setBox(VBox box) {
+    public void setBox(BorderPane box) {
         this.box = box;
     }
 
