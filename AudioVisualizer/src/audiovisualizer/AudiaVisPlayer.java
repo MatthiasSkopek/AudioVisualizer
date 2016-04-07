@@ -25,7 +25,7 @@ import javafx.util.Duration;
 
 /*
  *
- * @author Matthias
+ * @author Matthias Stirmayr
  */
 public class AudiaVisPlayer {
 
