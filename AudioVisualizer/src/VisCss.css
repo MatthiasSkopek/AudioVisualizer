@@ -25,3 +25,9 @@ and open the template in the editor.
 #main{
     -fx-background-color:#34495e; 
 }
+#toolbar{
+    -fx-width:50%;
+}
+#menubar{
+    -fx-width:50%;
+}
