@@ -71,8 +71,9 @@ public class AudioVisualizer extends Application {
                             System.out.println(format);
 
                             AudiaVisPlayer p = new AudiaVisPlayer();
-
+                            
                             p.start(format);
+                            
                             Scene x = new Scene(p.getBox());
                             x.getStylesheets().add("VisCss.css");
                             primaryStage.setScene(x);

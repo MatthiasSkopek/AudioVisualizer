@@ -48,22 +48,18 @@ public class VUMeter extends Parent {
     }
 
     public VUMeter() {
-        colorList.add(Color.RED);
-        colorList.add(Color.AQUA);
-        colorList.add(Color.YELLOW);
-        colorList.add(Color.BLACK);
-        colorList.add(Color.CYAN);
-        colorList.add(Color.DODGERBLUE);
-        colorList.add(Color.GOLD);
-        colorList.add(Color.VIOLET);
-        colorList.add(Color.CORAL);
-        colorList.add(Color.ORANGERED);
-        colorList.add(Color.DARKSLATEBLUE);
-        colorList.add(Color.TEAL);
+        colorList.add(Color.web("1abc9c"));
+       colorList.add(Color.web("f1c40f"));
+       colorList.add(Color.web("e67e22"));
+       colorList.add(Color.web("c0392b"));
+       colorList.add(Color.web("9b59b6"));
+       colorList.add(Color.web("3498db"));
+       colorList.add(Color.web("2c3e50"));
+       colorList.add(Color.web("f39c12"));
         x.setStyle("bottom");
         x.setFill(firstBAR_COLOR);
         getChildren().addAll(x);
-        setEffect(DropShadowBuilder.create().blurType(BlurType.TWO_PASS_BOX).radius(10).spread(0.4).color(Color.web("#b10000")).build());
+        //setEffect(DropShadowBuilder.create().blurType(BlurType.TWO_PASS_BOX).radius(10).spread(0.4).color(Color.web("#b10000")).build());
         //setEffect(new MotionBlur(90, 8));
     }
 

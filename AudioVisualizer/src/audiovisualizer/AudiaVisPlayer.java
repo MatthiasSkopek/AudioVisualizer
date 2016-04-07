@@ -10,6 +10,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -38,8 +39,11 @@ public class AudiaVisPlayer {
     private Parent p;
 
     public void start(String pathOfData) {
+        
         lines = new HBox();
+        
         lines.setPrefHeight(300);
+        lines.setAlignment(Pos.BOTTOM_CENTER);
         /**
          * SONGS: hello tears techno testsound trap1 bass bounce
          */
@@ -96,7 +100,7 @@ public class AudiaVisPlayer {
 
         mediaPlayer.setAudioSpectrumNumBands(300);
         mediaPlayer.setAudioSpectrumListener(spectrumListener);
-        mediaPlayer.setAudioSpectrumInterval(1d / 30d);
+        mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
         //TOOL
         Button btn = new Button();
@@ -154,7 +158,9 @@ public class AudiaVisPlayer {
         HBox toolline = new HBox(btn, stop, time);
 
         box = new VBox(lines, toolline);
+        box.setId("main");
     }
+    
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
