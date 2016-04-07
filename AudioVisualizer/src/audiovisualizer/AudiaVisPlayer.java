@@ -48,6 +48,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
     private Double[] lastValues = new Double[AMOUNT];
     private BorderPane box;
     private HBox lines;
+    private double Muliply = 5;
     private AudioSpectrumListener spectrumListener;
     private Parent p;
 
@@ -212,7 +213,6 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         box = new BorderPane();
         box.setTop(tools);
         box.setBottom(lines);
-       
         box.setId("main");
     }
 

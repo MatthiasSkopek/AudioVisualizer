@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jdk.nashorn.internal.runtime.JSErrorType;
 
 /**
  *
@@ -65,15 +66,11 @@ public class AudioVisualizer extends Application {
 
                         File file = fileChooser.showOpenDialog(primaryStage);
                         if (file != null) {
-                            path = file.getAbsolutePath();
-                            System.out.println(path);
-                            String format = "file:///";
-                            path = path.replace("\\", "/");
-                            format += path;
-                            System.out.println(format);
+                            path = file.toURI().toString();
+                            System.out.println("Loading: " + path);
                             
                             AudiaVisPlayer p = new AudiaVisPlayer();
-                            p.start(560,format);
+                            p.start(560,path);
                             Scene x = new Scene(p.getBox());
                             x.widthProperty().addListener(new ChangeListener<Number>() {
 
@@ -83,7 +80,13 @@ public class AudioVisualizer extends Application {
                                     
                                 }
                             });
-                            
+                            x.heightProperty().addListener(new ChangeListener<Number>() {
+
+                                @Override
+                                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                    p.heightPropertyListener.setValue(x.getHeight());
+                                }
+                            });
                             
                             x.getStylesheets().add("VisCss.css");
                             primaryStage.setScene(x);
