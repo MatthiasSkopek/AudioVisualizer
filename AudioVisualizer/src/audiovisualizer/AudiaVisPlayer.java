@@ -5,6 +5,7 @@
  */
 package audiovisualizer;
 
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
@@ -15,6 +16,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToolBar;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioSpectrumListener;
 import javafx.scene.media.Media;
@@ -37,8 +45,15 @@ public class AudiaVisPlayer {
     private HBox lines;
     private AudioSpectrumListener spectrumListener;
     private Parent p;
+ final MenuItem  exitItem = new MenuItem("Exit"); 
+        final MenuItem  openItem = new MenuItem("Open");   
 
-    public void start(String pathOfData) {
+    /**
+     *
+     * @param pathOfData
+     */
+    public void start(String pathOfData)  {
+
         
         lines = new HBox();
         
@@ -103,19 +118,31 @@ public class AudiaVisPlayer {
         mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
         //TOOL
-        Button btn = new Button();
-        btn.setId("play");
-        btn.setPrefWidth(40);
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+         final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
+        final MenuBar menuBar = new MenuBar(fileMenu);
+        menuBar.setId("menuBar");
+        menuBar.setPrefHeight(30);
+        Button play = new Button ();
+        Button stop = new Button ();
+        Label time = new Label();
+        final ToolBar tool = new ToolBar(
+                play,stop,time
+        );
+        tool.setId("toolbar");
+        tool.setPrefHeight(30);
+        play.setId("play");
+        play.setPrefWidth(40);
+        play.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
                 if (isplay) {
-                    btn.setId("play");
+                    
+                    play.setId("play");
                     mediaPlayer.pause();
                     isplay = false;
                 } else {
-                    btn.setId("pause");
+                    play.setId("pause");
                     mediaPlayer.play();
                     isplay = true;
                 }
@@ -123,9 +150,8 @@ public class AudiaVisPlayer {
             }
         });
 
-        Button stop = new Button();
         stop.setId("stop");
-        Label time = new Label();
+        
         stop.setPrefWidth(25);
         stop.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -135,7 +161,7 @@ public class AudiaVisPlayer {
                 isplay = false;
                 time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
                 
-                btn.setId("play");
+                play.setId("play");
             }
         });
 
@@ -155,9 +181,10 @@ public class AudiaVisPlayer {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
         
-        HBox toolline = new HBox(btn, stop, time);
+        HBox toolline = new HBox(menuBar, tool, time);
 
-        box = new VBox(lines, toolline);
+        box = new VBox(toolline,lines);
+       
         box.setId("main");
     }
     
@@ -216,4 +243,5 @@ public class AudiaVisPlayer {
             }
         }
     }
+   
 }
