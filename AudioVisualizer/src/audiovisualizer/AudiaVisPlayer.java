@@ -8,6 +8,7 @@ package audiovisualizer;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -32,19 +33,21 @@ import javafx.util.Duration;
 
 /*
  *
- * @author Matthias
+ * @author Matthias Stirmayr
  */
 public class AudiaVisPlayer {
 
     private boolean isplay = false;
     private Duration duration;
     private MediaPlayer mediaPlayer;
-    private VUMeter[] vuMeters = new VUMeter[100];
-    private Double[] lastValues = new Double[100];
+    private int AMOUNT = 100;
+    private VUMeter[] vuMeters = new VUMeter[AMOUNT];
+    private Double[] lastValues = new Double[AMOUNT];
     private VBox box;
     private HBox lines;
     private AudioSpectrumListener spectrumListener;
     private Parent p;
+<<<<<<< HEAD
  final MenuItem  exitItem = new MenuItem("Exit"); 
         final MenuItem  openItem = new MenuItem("Open");   
 
@@ -55,8 +58,26 @@ public class AudiaVisPlayer {
     public void start(String pathOfData)  {
 
         
+=======
+    public DoubleProperty bild;
+
+    public void start(int Bildschirmbreite, String pathOfData) {
+        bild = new SimpleDoubleProperty(AMOUNT) {
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                for (int i = 0; i < AMOUNT; i++) {
+                    double temp32 = bild.getValue();
+                    int temp23 = (int)temp32;
+                    vuMeters[i].adjustwidth(temp23);
+                }
+            }
+        };
+
+        //BOX
+>>>>>>> origin/master
         lines = new HBox();
-        
+
         lines.setPrefHeight(300);
         lines.setAlignment(Pos.BOTTOM_CENTER);
         /**
@@ -64,9 +85,9 @@ public class AudiaVisPlayer {
          */
         mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
-            vuMeters[i] = new VUMeter();
+            vuMeters[i] = new VUMeter(Bildschirmbreite, AMOUNT);
             vuMeters[i].setId("bottom");
-            
+
         }
         for (int i = 0; i < lastValues.length; i++) {
             lastValues[i] = 0d;
@@ -77,12 +98,12 @@ public class AudiaVisPlayer {
             public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
                 double avarage = 0;
                 boolean change = false;
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < AMOUNT; i++) {
                     //vuMeters[i].setValue((60 + magnitudes[i]) / 60);
                     /**
                      * ORI vuMeters[i].setValue((60 + magnitudes[i]) / 60);
                      */
-                   
+
                     double temp = ((60 + (magnitudes[i])) * 5);
                     if (i < 3) {
                         if (lastValues[i] < temp) {
@@ -106,14 +127,14 @@ public class AudiaVisPlayer {
                     lastValues[i] = vuMeters[i].getValue();
                 }
                 if (change) {
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < AMOUNT; i++) {
                         vuMeters[i].nextColor();
                     }
                 }
             }
         };
 
-        mediaPlayer.setAudioSpectrumNumBands(300);
+        mediaPlayer.setAudioSpectrumNumBands(3*AMOUNT);
         mediaPlayer.setAudioSpectrumListener(spectrumListener);
         mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
@@ -160,8 +181,13 @@ public class AudiaVisPlayer {
                 mediaPlayer.stop();
                 isplay = false;
                 time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
+<<<<<<< HEAD
                 
                 play.setId("play");
+=======
+
+                btn.setId("play");
+>>>>>>> origin/master
             }
         });
 
@@ -176,18 +202,22 @@ public class AudiaVisPlayer {
             Duration currentTime = mediaPlayer.getCurrentTime();
             time.setText(fTime(currentTime, duration));
         });
-        
+
         mediaPlayer.setOnEndOfMedia(() -> {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
+<<<<<<< HEAD
         
         HBox toolline = new HBox(menuBar, tool, time);
+=======
+
+        HBox toolline = new HBox(btn, stop, time);
+>>>>>>> origin/master
 
         box = new VBox(toolline,lines);
        
         box.setId("main");
     }
-    
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;

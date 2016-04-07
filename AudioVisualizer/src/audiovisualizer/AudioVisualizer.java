@@ -8,6 +8,8 @@ package audiovisualizer;
 import java.awt.Desktop;
 import java.io.File;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -69,12 +71,19 @@ public class AudioVisualizer extends Application {
                             path = path.replace("\\", "/");
                             format += path;
                             System.out.println(format);
-
+                            
                             AudiaVisPlayer p = new AudiaVisPlayer();
-                            
-                            p.start(format);
-                            
+                            p.start(560,format);
                             Scene x = new Scene(p.getBox());
+                            x.widthProperty().addListener(new ChangeListener<Number>() {
+
+                                @Override
+                                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                                    p.bild.set(x.getWidth());
+                                }
+                            });
+                            
+                            
                             x.getStylesheets().add("VisCss.css");
                             primaryStage.setScene(x);
                         }
