@@ -9,6 +9,8 @@ import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -16,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -35,7 +38,7 @@ import javafx.util.Duration;
  *
  * @author Matthias Stirmayr
  */
-public class AudiaVisPlayer {
+public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 
     private boolean isplay = false;
     private Duration duration;
@@ -49,7 +52,8 @@ public class AudiaVisPlayer {
     private Parent p;
 
  final MenuItem  exitItem = new MenuItem("Exit"); 
-        final MenuItem  openItem = new MenuItem("Open");   
+        final MenuItem  openItem = new MenuItem("Open");
+        final MenuItem  helpItem = new MenuItem("Help");   
 
     public DoubleProperty bild;
 
@@ -132,18 +136,25 @@ public class AudiaVisPlayer {
 
         //TOOL
          final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
-        final MenuBar menuBar = new MenuBar(fileMenu);
+         final Menu helpMenu = new Menu( "Help" , null,helpItem);
+        final MenuBar menuBar = new MenuBar(fileMenu,helpMenu);
         menuBar.setId("menuBar");
-        menuBar.setPrefHeight(35);
         Button play = new Button ();
         Button stop = new Button ();
         Label time = new Label();
+        //Do siazt a imma ab!!!!
+//        ObservableList<String> options = 
+//    FXCollections.observableArrayList(
+//        "Drop Shadow",
+//        "Motion Blur",
+//        "Rainbow"
+//    );
+//final ComboBox comboBox = new ComboBox(options);
         final ToolBar tool = new ToolBar(
                 play,stop,time
         );
         tool.autosize();
         tool.setId("toolbar");
-        tool.setPrefHeight(30);
         play.setId("play");
         play.setPrefWidth(40);
         play.setOnAction(new EventHandler<ActionEvent>() {
@@ -195,12 +206,11 @@ public class AudiaVisPlayer {
         mediaPlayer.setOnEndOfMedia(() -> {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
-        
-        
-        tool.setMaxWidth(Double.MAX_VALUE);
-        menuBar.setMaxWidth(Double.MAX_VALUE);
+        VBox tools = new VBox();
+        tools.getChildren().add(menuBar);
+        tools.getChildren().add(tool);
         box = new BorderPane();
-        box.setTop(tool);
+        box.setTop(tools);
         box.setBottom(lines);
        
         box.setId("main");
@@ -260,5 +270,16 @@ public class AudiaVisPlayer {
             }
         }
     }
-   
+    @Override
+    public void handle(ActionEvent event) {
+        final Object source = event.getSource();
+        if(source==exitItem){
+        Platform.exit();
+        }else if(source == openItem){
+            //Mias ma si nu üwalegen wie ma wida zruck kummt^^
+        }
+        else if(source == helpItem){
+            //Do fandad i a POP UP nice
+        }
+    }
 }
