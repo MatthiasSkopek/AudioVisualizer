@@ -45,36 +45,43 @@ public class AudiaVisPlayer {
     private Double[] lastValues = new Double[AMOUNT];
     private BorderPane box;
     private HBox lines;
+    private double Muliply = 5;
     private AudioSpectrumListener spectrumListener;
     private Parent p;
 
- final MenuItem  exitItem = new MenuItem("Exit"); 
-        final MenuItem  openItem = new MenuItem("Open");   
+    final MenuItem exitItem = new MenuItem("Exit");
+    final MenuItem openItem = new MenuItem("Open");
 
     public DoubleProperty bild;
+    public DoubleProperty heightPropertyListener;
 
     public void start(int Bildschirmbreite, String pathOfData) {
-        bild = new SimpleDoubleProperty(AMOUNT) {
+        bild = new SimpleDoubleProperty(0) {
             @Override
             protected void invalidated() {
                 super.invalidated();
                 for (int i = 0; i < AMOUNT; i++) {
                     double temp32 = bild.getValue();
-                    int temp23 = (int)temp32;
+                    int temp23 = (int) temp32;
                     vuMeters[i].adjustwidth(temp23);
                 }
             }
         };
+        
+        heightPropertyListener = new SimpleDoubleProperty(0){
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                Muliply = heightPropertyListener.getValue()/53;
+            }
+        };
 
         //BOX
-
         lines = new HBox();
-
+        lines.setMinHeight(100);
         lines.setPrefHeight(300);
         lines.setAlignment(Pos.BOTTOM_CENTER);
-        /**
-         * SONGS: hello tears techno testsound trap1 bass bounce
-         */
+ 
         mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
             vuMeters[i] = new VUMeter(Bildschirmbreite, AMOUNT);
@@ -96,11 +103,11 @@ public class AudiaVisPlayer {
                      * ORI vuMeters[i].setValue((60 + magnitudes[i]) / 60);
                      */
 
-                    double temp = ((60 + (magnitudes[i])) * 5);
-                    if (i < 3) {
+                    double temp = ((60 + (magnitudes[i])) * Muliply);
+                    if (i < 2) {
                         if (lastValues[i] < temp) {
                             vuMeters[i].setValue(temp);
-                            if (temp > 220) {
+                            if (temp > (Muliply*53*0.8)) {
                                 change = true;
                             }
                         } else {
@@ -126,20 +133,23 @@ public class AudiaVisPlayer {
             }
         };
 
-        mediaPlayer.setAudioSpectrumNumBands(3*AMOUNT);
+        mediaPlayer.setAudioSpectrumNumBands(2 * AMOUNT);
         mediaPlayer.setAudioSpectrumListener(spectrumListener);
         mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
         //TOOL
-         final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
-        final MenuBar menuBar = new MenuBar(fileMenu);
+        final Menu fileMenu = new Menu("File");
+        fileMenu.getItems().add(openItem);
+        fileMenu.getItems().add(exitItem);
+        final MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
         menuBar.setId("menuBar");
         menuBar.setPrefHeight(35);
-        Button play = new Button ();
-        Button stop = new Button ();
+        Button play = new Button();
+        Button stop = new Button();
         Label time = new Label();
         final ToolBar tool = new ToolBar(
-                play,stop,time
+                play, stop, time
         );
         tool.autosize();
         tool.setId("toolbar");
@@ -151,7 +161,7 @@ public class AudiaVisPlayer {
             @Override
             public void handle(ActionEvent event) {
                 if (isplay) {
-                    
+
                     play.setId("play");
                     mediaPlayer.pause();
                     isplay = false;
@@ -165,7 +175,7 @@ public class AudiaVisPlayer {
         });
 
         stop.setId("stop");
-        
+
         stop.setPrefWidth(25);
         stop.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -173,7 +183,7 @@ public class AudiaVisPlayer {
             public void handle(ActionEvent t) {
                 mediaPlayer.stop();
                 isplay = false;
-                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));     
+                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
                 play.setId("play");
 
                 play.setId("play");
@@ -195,14 +205,13 @@ public class AudiaVisPlayer {
         mediaPlayer.setOnEndOfMedia(() -> {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
-        
-        
+
         tool.setMaxWidth(Double.MAX_VALUE);
         menuBar.setMaxWidth(Double.MAX_VALUE);
         box = new BorderPane();
         box.setTop(tool);
         box.setBottom(lines);
-       
+
         box.setId("main");
     }
 
@@ -260,5 +269,5 @@ public class AudiaVisPlayer {
             }
         }
     }
-   
+
 }

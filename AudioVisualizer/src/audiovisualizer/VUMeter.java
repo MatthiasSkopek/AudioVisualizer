@@ -42,7 +42,7 @@ public class VUMeter extends Parent {
     }
 
     private int colorIndex = 0;
-    private final Color firstBAR_COLOR = Color.web("#cf0f0f");
+    private final Color firstBAR_COLOR = Color.web("c0392b");
     private ArrayList<Color> colorList = new ArrayList<>();
     //private Rectangle[] bars = new Rectangle[20];
 
