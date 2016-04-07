@@ -63,7 +63,7 @@ public class VUMeter extends Parent {
         x.setStyle("bottom");
         x.setFill(firstBAR_COLOR);
         getChildren().addAll(x);
-        //setEffect(DropShadowBuilder.create().blurType(BlurType.TWO_PASS_BOX).radius(10).spread(0.4).color(Color.web("#b10000")).build());
+        setEffect(DropShadowBuilder.create().blurType(BlurType.TWO_PASS_BOX).radius(10).spread(0.4).color(Color.web("#b10000")).build());
         //setEffect(new MotionBlur(90, 8));
     }
 
