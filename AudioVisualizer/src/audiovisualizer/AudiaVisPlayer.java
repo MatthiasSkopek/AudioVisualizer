@@ -1,32 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package audiovisualizer;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioSpectrumListener;
 import javafx.scene.media.Media;
@@ -35,29 +21,48 @@ import javafx.util.Duration;
 
 
 /*
- *
+ * A simple Audio Player with a Visualizing Part that shwos the frequency bands.
  * @author Matthias Stirmayr
  */
 public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 
+    //Simple Boolean that nows if the player is playing
     private boolean isplay = false;
+    //The duration of the song
     private Duration duration;
+    //The main mediaplayer
     private MediaPlayer mediaPlayer;
+    //The amount of bars to be shown. Adjustable!
     private int AMOUNT = 100;
-    private VUMeter[] vuMeters = new VUMeter[AMOUNT];
+    //Array of all the "Bars"
+    private Bar[] vuMeters = new Bar[AMOUNT];
+    //Array with the PreValues of all bars so that a smoth look can be created
     private Double[] lastValues = new Double[AMOUNT];
+    //The Layout pane
     private BorderPane box;
+    //The HBox for all of the Bars
     private HBox lines;
+    //A Value which is needed to calculted the hight and the value for color changing. Deppends on Window hight
     private double Muliply = 5;
+    //The main audiospectrunListener
     private AudioSpectrumListener spectrumListener;
-    private Parent p;
-
- final MenuItem  exitItem = new MenuItem("Exit"); 
-        final MenuItem  openItem = new MenuItem("Open");
-        final MenuItem  helpItem = new MenuItem("Help");   
-
+    //MenuItem for exiting the program
+    final MenuItem exitItem = new MenuItem("Exit");
+    //MenuItem for Return to the opening page
+    final MenuItem openItem = new MenuItem("Open");
+    //MenuItem for the Help
+    final MenuItem helpItem = new MenuItem("Help");
+    //A doubleproperty which is used for calculation of the width of the bars
     public DoubleProperty bild;
+    //A doubleproperty which is used for calculation of the height of the bars
     public DoubleProperty heightPropertyListener;
+    /**
+     * A Method wich creates the Player with all of its parts. Also the Calculation is in this method.
+     * @return Nothing
+     * @param Bildschirmbreite the StartWitdh of the window
+     * @param pathOfData path to the File which should be palyed
+     * @
+     */
     public void start(int Bildschirmbreite, String pathOfData) {
         bild = new SimpleDoubleProperty(AMOUNT) {
             @Override
@@ -65,16 +70,16 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
                 super.invalidated();
                 for (int i = 0; i < AMOUNT; i++) {
                     double temp32 = bild.getValue();
-                    int temp23 = (int)temp32;
+                    int temp23 = (int) temp32;
                     vuMeters[i].adjustwidth(temp23);
                 }
             }
         };
-        heightPropertyListener = new SimpleDoubleProperty(0){
+        heightPropertyListener = new SimpleDoubleProperty(0) {
             @Override
             protected void invalidated() {
                 super.invalidated();
-                Muliply = heightPropertyListener.getValue()/60;
+                Muliply = heightPropertyListener.getValue() / 60;
             }
         };
         //BOX
@@ -83,12 +88,10 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 
         lines.setPrefHeight(300);
         lines.setAlignment(Pos.BOTTOM_CENTER);
-        /**
-         * SONGS: hello tears techno testsound trap1 bass bounce
-         */
+     
         mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
-            vuMeters[i] = new VUMeter(Bildschirmbreite, AMOUNT);
+            vuMeters[i] = new Bar(Bildschirmbreite, AMOUNT);
             vuMeters[i].setId("bottom");
 
         }
@@ -111,7 +114,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
                     if (i < 3) {
                         if (lastValues[i] < temp) {
                             vuMeters[i].setValue(temp);
-                            if (temp > Muliply*60*0.75) {
+                            if (temp > Muliply * 60 * 0.75) {
                                 change = true;
                             }
                         } else {
@@ -137,22 +140,22 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             }
         };
 
-        mediaPlayer.setAudioSpectrumNumBands(3*AMOUNT);
+        mediaPlayer.setAudioSpectrumNumBands(3 * AMOUNT);
         mediaPlayer.setAudioSpectrumListener(spectrumListener);
         mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
         //TOOL
-        final Menu fileMenu = new Menu( "File");
+        final Menu fileMenu = new Menu("File");
         fileMenu.getItems().add(openItem);
         fileMenu.getItems().add(exitItem);
-        final Menu helpMenu = new Menu( "Help");
+        final Menu helpMenu = new Menu("Help");
         helpMenu.getItems().add(helpItem);
         final MenuBar menuBar = new MenuBar();
         menuBar.getMenus().add(fileMenu);
         menuBar.getMenus().add(helpMenu);
         menuBar.setId("menuBar");
-        Button play = new Button ();
-        Button stop = new Button ();
+        Button play = new Button();
+        Button stop = new Button();
         Label time = new Label();
         //Do siazt a imma ab!!!!
 //        ObservableList<String> options = 
@@ -163,7 +166,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 //    );
 //final ComboBox comboBox = new ComboBox(options);
         final ToolBar tool = new ToolBar(
-                play,stop,time
+                play, stop, time
         );
         tool.autosize();
         tool.setId("toolbar");
@@ -174,7 +177,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent event) {
                 if (isplay) {
-                    
+
                     play.setId("play");
                     mediaPlayer.pause();
                     isplay = false;
@@ -188,7 +191,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         });
 
         stop.setId("stop");
-        
+
         stop.setPrefWidth(25);
         stop.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -196,7 +199,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             public void handle(ActionEvent t) {
                 mediaPlayer.stop();
                 isplay = false;
-                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));     
+                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
                 play.setId("play");
 
                 play.setId("play");
@@ -226,23 +229,41 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         box.setBottom(lines);
         box.setId("main");
     }
-
+    /**
+     * getter of Mediaplayer
+     * @return meidaplayer 
+     */
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }
-
+    /**
+     * Setter for Mediaplayer
+     * @param mediaPlayer 
+     */
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
     }
-
+    /**
+     * Getter for the Layout Box
+     * @return Borderpane
+     */
     public BorderPane getBox() {
         return box;
     }
-
+    /**
+     * Setter for the layoutbox. Normaly should not be used.
+     * @param box 
+     * @deprecated
+     */
     public void setBox(BorderPane box) {
         this.box = box;
     }
-
+    /**
+     * A Method that creates a nice fromated String out of passed an overall time.
+     * @param passed Passed time
+     * @param dauer Overall duration of the song
+     * @return String
+     */
     private static String fTime(Duration passed, Duration dauer) {
         int pasedTime = (int) Math.floor(passed.toSeconds());
         int pasedH = pasedTime / (60 * 60);
@@ -281,15 +302,18 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             }
         }
     }
+    /**
+     * Handler for the menubuttons.
+     * @param event 
+     */
     @Override
     public void handle(ActionEvent event) {
         final Object source = event.getSource();
-        if(source==exitItem){
-        Platform.exit();
-        }else if(source == openItem){
+        if (source == exitItem) {
+            Platform.exit();
+        } else if (source == openItem) {
             //Mias ma si nu üwalegen wie ma wida zruck kummt^^
-        }
-        else if(source == helpItem){
+        } else if (source == helpItem) {
             //Do fandad i a POP UP nice
         }
     }
