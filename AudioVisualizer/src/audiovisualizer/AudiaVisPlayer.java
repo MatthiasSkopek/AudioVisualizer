@@ -57,7 +57,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         final MenuItem  helpItem = new MenuItem("Help");   
 
     public DoubleProperty bild;
-
+    public DoubleProperty heightPropertyListener;
     public void start(int Bildschirmbreite, String pathOfData) {
         bild = new SimpleDoubleProperty(AMOUNT) {
             @Override
@@ -70,7 +70,13 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
                 }
             }
         };
-
+        heightPropertyListener = new SimpleDoubleProperty(0){
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                Muliply = heightPropertyListener.getValue()/60;
+            }
+        };
         //BOX
 
         lines = new HBox();
@@ -101,11 +107,11 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
                      * ORI vuMeters[i].setValue((60 + magnitudes[i]) / 60);
                      */
 
-                    double temp = ((60 + (magnitudes[i])) * 5);
+                    double temp = ((60 + (magnitudes[i])) * Muliply);
                     if (i < 3) {
                         if (lastValues[i] < temp) {
                             vuMeters[i].setValue(temp);
-                            if (temp > 220) {
+                            if (temp > Muliply*60*0.75) {
                                 change = true;
                             }
                         } else {
@@ -136,9 +142,14 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         mediaPlayer.setAudioSpectrumInterval(1d / 60);
 
         //TOOL
-         final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
-         final Menu helpMenu = new Menu( "Help" , null,helpItem);
-        final MenuBar menuBar = new MenuBar(fileMenu,helpMenu);
+        final Menu fileMenu = new Menu( "File");
+        fileMenu.getItems().add(openItem);
+        fileMenu.getItems().add(exitItem);
+        final Menu helpMenu = new Menu( "Help");
+        helpMenu.getItems().add(helpItem);
+        final MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
+        menuBar.getMenus().add(helpMenu);
         menuBar.setId("menuBar");
         Button play = new Button ();
         Button stop = new Button ();
