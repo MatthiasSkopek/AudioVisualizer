@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioSpectrumListener;
@@ -56,8 +59,13 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
     public DoubleProperty bild;
     //A doubleproperty which is used for calculation of the height of the bars
     public DoubleProperty heightPropertyListener;
+    //Slider for Time
+    private Slider slider;
+
     /**
-     * A Method wich creates the Player with all of its parts. Also the Calculation is in this method.
+     * A Method wich creates the Player with all of its parts. Also the
+     * Calculation is in this method.
+     *
      * @return Nothing
      * @param Bildschirmbreite the StartWitdh of the window
      * @param pathOfData path to the File which should be palyed
@@ -88,7 +96,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 
         lines.setPrefHeight(300);
         lines.setAlignment(Pos.BOTTOM_CENTER);
-     
+
         mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
             vuMeters[i] = new Bar(Bildschirmbreite, AMOUNT);
@@ -157,6 +165,30 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         Button play = new Button();
         Button stop = new Button();
         Label time = new Label();
+        slider = new Slider();
+        slider.setPrefWidth(300);
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if (slider.isValueChanging()) {
+// multiply duration by percentage calculated by slider position
+                    if (duration != null) {
+                        mediaPlayer.seek(duration.multiply(slider.getValue() / 100.0));
+                    }
+
+                }
+            }
+
+        });
+
+        mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
+                slider.setValue(mediaPlayer.getCurrentTime().divide(duration).toMillis() * 100.0);
+            }
+        });
         //Do siazt a imma ab!!!!
 //        ObservableList<String> options = 
 //    FXCollections.observableArrayList(
@@ -166,7 +198,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
 //    );
 //final ComboBox comboBox = new ComboBox(options);
         final ToolBar tool = new ToolBar(
-                play, stop, time
+                play, stop, time, slider
         );
         tool.autosize();
         tool.setId("toolbar");
@@ -198,10 +230,11 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent t) {
                 mediaPlayer.stop();
+                mediaPlayer.seek(new Duration(0d));
                 isplay = false;
                 time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
                 play.setId("play");
-
+                slider.setValue(0.0);
                 play.setId("play");
             }
         });
@@ -217,9 +250,14 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             Duration currentTime = mediaPlayer.getCurrentTime();
             time.setText(fTime(currentTime, duration));
         });
-
+        
         mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.stop();
+            isplay = false;
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
+            play.setId("play");
+            slider.setValue(0.0);
+            
         });
         VBox tools = new VBox();
         tools.getChildren().add(menuBar);
@@ -229,37 +267,48 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         box.setBottom(lines);
         box.setId("main");
     }
+
     /**
      * getter of Mediaplayer
-     * @return meidaplayer 
+     *
+     * @return meidaplayer
      */
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
     }
+
     /**
      * Setter for Mediaplayer
-     * @param mediaPlayer 
+     *
+     * @param mediaPlayer
      */
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
     }
+
     /**
      * Getter for the Layout Box
+     *
      * @return Borderpane
      */
     public BorderPane getBox() {
         return box;
     }
+
     /**
      * Setter for the layoutbox. Normaly should not be used.
-     * @param box 
+     *
+     * @param box
      * @deprecated
      */
     public void setBox(BorderPane box) {
         this.box = box;
     }
+
     /**
-     * A Method that creates a nice fromated String out of passed an overall time.
+     * A Method that creates a nice fromated String out of passed an overall
+     * time.
+     *
      * @param passed Passed time
      * @param dauer Overall duration of the song
      * @return String
@@ -302,9 +351,11 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             }
         }
     }
+
     /**
      * Handler for the menubuttons.
-     * @param event 
+     *
+     * @param event
      */
     @Override
     public void handle(ActionEvent event) {
@@ -312,7 +363,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         if (source == exitItem) {
             Platform.exit();
         } else if (source == openItem) {
-            //Mias ma si nu üwalegen wie ma wida zruck kummt^^
+            System.out.println("a");
         } else if (source == helpItem) {
             //Do fandad i a POP UP nice
         }
