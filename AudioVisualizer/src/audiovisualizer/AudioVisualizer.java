@@ -15,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -97,13 +98,18 @@ public class AudioVisualizer extends Application {
         root.setTop(mainLabel);
         root.setCenter(btn);
         root.setBottom(bottomLabel);
+        root.setId("body");
 
         Scene scene = new Scene(root, 560, 350);
+        
+        
 
         scene.getStylesheets().add("style.css");
+        
         primaryStage.setTitle("AudioVisualizer");
 
         primaryStage.setScene(scene);
+        primaryStage.getIcons().add(new Image("Logo.png"));
         primaryStage.show();
     }
 

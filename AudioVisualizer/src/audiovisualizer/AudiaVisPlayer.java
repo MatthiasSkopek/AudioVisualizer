@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package audiovisualizer;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -18,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -38,7 +30,7 @@ import javafx.util.Duration;
  *
  * @author Matthias Stirmayr
  */
-public class AudiaVisPlayer implements EventHandler<ActionEvent> {
+public class AudiaVisPlayer {
 
     private boolean isplay = false;
     private Duration duration;
@@ -52,34 +44,39 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
     private AudioSpectrumListener spectrumListener;
     private Parent p;
 
- final MenuItem  exitItem = new MenuItem("Exit"); 
-        final MenuItem  openItem = new MenuItem("Open");
-        final MenuItem  helpItem = new MenuItem("Help");   
+    final MenuItem exitItem = new MenuItem("Exit");
+    final MenuItem openItem = new MenuItem("Open");
 
     public DoubleProperty bild;
+    public DoubleProperty heightPropertyListener;
 
     public void start(int Bildschirmbreite, String pathOfData) {
-        bild = new SimpleDoubleProperty(AMOUNT) {
+        bild = new SimpleDoubleProperty(0) {
             @Override
             protected void invalidated() {
                 super.invalidated();
                 for (int i = 0; i < AMOUNT; i++) {
                     double temp32 = bild.getValue();
-                    int temp23 = (int)temp32;
+                    int temp23 = (int) temp32;
                     vuMeters[i].adjustwidth(temp23);
                 }
             }
         };
+        
+        heightPropertyListener = new SimpleDoubleProperty(0){
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                Muliply = heightPropertyListener.getValue()/53;
+            }
+        };
 
         //BOX
-
         lines = new HBox();
-
+        lines.setMinHeight(100);
         lines.setPrefHeight(300);
         lines.setAlignment(Pos.BOTTOM_CENTER);
-        /**
-         * SONGS: hello tears techno testsound trap1 bass bounce
-         */
+ 
         mediaPlayer = new MediaPlayer(new Media(pathOfData));
         for (int i = 0; i < vuMeters.length; i++) {
             vuMeters[i] = new VUMeter(Bildschirmbreite, AMOUNT);
@@ -101,11 +98,11 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
                      * ORI vuMeters[i].setValue((60 + magnitudes[i]) / 60);
                      */
 
-                    double temp = ((60 + (magnitudes[i])) * 5);
-                    if (i < 3) {
+                    double temp = ((60 + (magnitudes[i])) * Muliply);
+                    if (i < 2) {
                         if (lastValues[i] < temp) {
                             vuMeters[i].setValue(temp);
-                            if (temp > 220) {
+                            if (temp > (Muliply*53*0.8)) {
                                 change = true;
                             }
                         } else {
@@ -131,31 +128,27 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             }
         };
 
-        mediaPlayer.setAudioSpectrumNumBands(3*AMOUNT);
+        mediaPlayer.setAudioSpectrumNumBands(2 * AMOUNT);
         mediaPlayer.setAudioSpectrumListener(spectrumListener);
-        mediaPlayer.setAudioSpectrumInterval(1d / 60);
+        mediaPlayer.setAudioSpectrumInterval(1d / 15);
 
         //TOOL
-         final Menu fileMenu = new Menu( "File" , null,openItem,exitItem);
-         final Menu helpMenu = new Menu( "Help" , null,helpItem);
-        final MenuBar menuBar = new MenuBar(fileMenu,helpMenu);
+        final Menu fileMenu = new Menu("File");
+        fileMenu.getItems().add(openItem);
+        fileMenu.getItems().add(exitItem);
+        final MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
         menuBar.setId("menuBar");
-        Button play = new Button ();
-        Button stop = new Button ();
+        menuBar.setPrefHeight(35);
+        Button play = new Button();
+        Button stop = new Button();
         Label time = new Label();
-        //Do siazt a imma ab!!!!
-//        ObservableList<String> options = 
-//    FXCollections.observableArrayList(
-//        "Drop Shadow",
-//        "Motion Blur",
-//        "Rainbow"
-//    );
-//final ComboBox comboBox = new ComboBox(options);
         final ToolBar tool = new ToolBar(
-                play,stop,time
+                play, stop, time
         );
         tool.autosize();
         tool.setId("toolbar");
+        tool.setPrefHeight(30);
         play.setId("play");
         play.setPrefWidth(40);
         play.setOnAction(new EventHandler<ActionEvent>() {
@@ -163,7 +156,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             @Override
             public void handle(ActionEvent event) {
                 if (isplay) {
-                    
+
                     play.setId("play");
                     mediaPlayer.pause();
                     isplay = false;
@@ -177,7 +170,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         });
 
         stop.setId("stop");
-        
+
         stop.setPrefWidth(25);
         stop.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -185,7 +178,7 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             public void handle(ActionEvent t) {
                 mediaPlayer.stop();
                 isplay = false;
-                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));     
+                time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
                 play.setId("play");
 
                 play.setId("play");
@@ -207,12 +200,13 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
         mediaPlayer.setOnEndOfMedia(() -> {
             time.setText(fTime(new Duration(0d), mediaPlayer.getMedia().getDuration()));
         });
-        VBox tools = new VBox();
-        tools.getChildren().add(menuBar);
-        tools.getChildren().add(tool);
+
+        tool.setMaxWidth(Double.MAX_VALUE);
+        menuBar.setMaxWidth(Double.MAX_VALUE);
         box = new BorderPane();
-        box.setTop(tools);
+        box.setTop(tool);
         box.setBottom(lines);
+
         box.setId("main");
     }
 
@@ -270,16 +264,5 @@ public class AudiaVisPlayer implements EventHandler<ActionEvent> {
             }
         }
     }
-    @Override
-    public void handle(ActionEvent event) {
-        final Object source = event.getSource();
-        if(source==exitItem){
-        Platform.exit();
-        }else if(source == openItem){
-            //Mias ma si nu üwalegen wie ma wida zruck kummt^^
-        }
-        else if(source == helpItem){
-            //Do fandad i a POP UP nice
-        }
-    }
+
 }

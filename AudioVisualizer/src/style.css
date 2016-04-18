@@ -12,3 +12,6 @@ and open the template in the editor.
     -fx-arc-height: 150;
     -fx-arc-width: 560;
 }
+#body{
+    -fx-background-color:#34495e; 
+}
